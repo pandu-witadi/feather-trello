@@ -5,14 +5,33 @@ import Home from '../views/Home.vue'
 import SignUp from '../views/SignUp'
 import Login from '../views/Login'
 
+import store from '../store'
+
 
 Vue.use(VueRouter)
+
+
+
+function isLoggedIn(to, from, next) {
+    store.dispatch('auth/authenticate').then( () => {
+        next()
+    }).catch( () => {
+        next('/login')
+    })
+}
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Home
+        component: Home,
+        beforeEnter(to, from, next) {
+            store.dispatch('auth/authenticate').then( () => {
+                next('/boards')
+            }).catch( () => {
+                next('/login')
+            })
+        }
     },
     {
         path: '/signup',
@@ -24,6 +43,18 @@ const routes = [
         name: 'Login',
         component: Login
     },
+    {
+        path: '/boards',
+        name: 'boards',
+        component: () => import('../views/Boards.vue'),
+        beforeEnter: isLoggedIn
+    },
+    {
+        path: '/boards/:id',
+        name: 'board',
+        component: () => import('../views/Board.vue'),
+        beforeEnter: isLoggedIn
+    }
 ]
 
 const router = new VueRouter({

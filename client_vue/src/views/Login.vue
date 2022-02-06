@@ -6,6 +6,7 @@
                     v-if="!loading"
                     v-model="valid"
                     @submit.prevent="login"
+                    @keydown.prevent.enter
                   >
                     <v-text-field
                       v-model="user.email"
@@ -64,7 +65,7 @@
                         password: this.user.password
                     }).then( () => {
                         console.log('logged in !')
-                        this.$router.push('/home')
+                        this.$router.push('/boards')
                     }).catch( e => {
                         console.log('authentication error', e)
                     })
